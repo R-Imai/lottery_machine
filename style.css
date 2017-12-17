@@ -10,6 +10,8 @@ body {
     width: 400px;
     height: 550px;
     float:right;
+    font-size: 200%;
+    word-wrap: break-word;
 }
 #lottery{
     float:left;

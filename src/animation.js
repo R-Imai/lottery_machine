@@ -24,7 +24,9 @@ class Circle {
       this.is_stop = 0;
       this.is_center = 0;
 
-      this.render(context);
+      this.key = lottery();
+
+      this.render(context, this.key);
   }
 
   end_check(){
@@ -82,17 +84,40 @@ class Circle {
     // document.getElementById("history_box").innerHTML = "(" + String(this.v_x) + "," + String(this.v_y) + ")";
   }
 
-  render(context) {
+  render(context, key) {
     context.beginPath();
+
+    var num = lottery_list[key];
+    num = ("0"+String(num)).slice(-2);
+    if(num[0] == num[1]){
+        num = 10;
+    }
+    else{
+        num = Number(num[1]);
+    }
+    var grd_arr = [
+        ["#2d2d2d", "#000000", "#404040", "#7e807e", "#bdbdbc", "#ffffff"],
+        ["#ff0000", "#c80000", "#ff2828", "#ff4747", "#ff6262", "#ffffff"],
+        ["#0000ff", "#0000c8", "#2828ff", "#4747ff", "#6262ff", "#ffffff"],
+        ["#009a22", "#017301", "#1d9a39", "#49b160", "#80df80", "#ffffff"],
+        ["#ff9900", "#c86600", "#ff8f28", "#ff9547", "#ffc062", "#ffffff"],
+        ["#6900ff", "#4d008a", "#8129ff", "#8247ff", "#9062ff", "#ffffff"],
+        ["#ff00de", "#b200c8", "#ff28e9", "#ff47f2", "#ff62fd", "#ffffff"],
+        ["#00c2ff", "#0292bf", "#28ecff", "#47e9ff", "#62fff1", "#ffffff"],
+        ["#00ff30", "#00c802", "#2cff28", "#77ff47", "#73ff62", "#ffffff"],
+        ["#dbff00", "#aeb800", "#daff28", "#f0ff47", "#e4ff62", "#ffffff"],
+        ["#ff0091", "#7000ff", "#00defc", "#2fff04", "#f2ff00", "#ffffff"]];
 
     var grd = context.createRadialGradient(this.x - (0.85*this.radius*Math.cos(this.theta)),this.y - (0.85*this.radius*Math.sin(this.theta)),10,this.x - (0.85*this.radius*Math.cos(this.theta)),this.y - (0.85*this.radius*Math.sin(this.theta)),this.radius*2);
 
-    grd.addColorStop(0,"#ff0091");
-    grd.addColorStop(0.2,"#7000ff");
-    grd.addColorStop(0.4,"#00defc");
-    grd.addColorStop(0.6,"#2fff04");
-    grd.addColorStop(0.8,"#f2ff00");
-    grd.addColorStop(1,"#ffffff");
+    var i = 0;
+    grd_arr[num].forEach(function(val){grd.addColorStop(i*0.2,val); i+=1;});
+    // grd.addColorStop(0,"#ff0091");
+    // grd.addColorStop(0.2,"#7000ff");
+    // grd.addColorStop(0.4,"#00defc");
+    // grd.addColorStop(0.6,"#2fff04");
+    // grd.addColorStop(0.8,"#f2ff00");
+    // grd.addColorStop(1,"#ffffff");
 
 
     context.fillStyle = grd;
@@ -110,13 +135,14 @@ function to_center(timestamp){
     ball.goto_center();
 
     // 各オブジェクトを描画する。
-    ball.render(context);
+    ball.render(context, ball.key);
 
     if (ball.is_center == 0) {
         window.requestAnimationFrame((ts) => to_center(ts));
     }
     else{
-        pickup_num();
+        pickup_num(ball.key);
+        document.getElementById("button").innerHTML = '<button class="button1" type="submit" onclick="ball_init()">RETRY!!</button>';
     }
 }
 
@@ -129,7 +155,7 @@ function loop(timestamp) {
   ball.update();
 
   // 各オブジェクトを描画する。
-  ball.render(context);
+  ball.render(context, ball.key);
 
   ball.end_check();
 
@@ -144,10 +170,15 @@ function loop(timestamp) {
 }
 
 
-function pickup_num(){
+function lottery(){
     var key = Math.floor(Math.random()*lottery_list.length);
+    return key;
+}
+
+
+function pickup_num(key){
     var num = lottery_list[key];
-    res_list.push(num);
+    res_list.push(("0"+String(num)).slice(-2));
     lottery_list.splice(key,1);
     document.getElementById("text_number").innerHTML = ("0"+String(num)).slice(-2);
     document.getElementById("history_box").innerHTML = String(res_list);
@@ -161,15 +192,23 @@ function pickup_num(){
 
 
 function animation_main(){
-    //
-    // メイン処理。
-    //
-    ball.init(WIDTH-60, HEIGHT-60, 50);
+    document.getElementById("button").innerHTML = '<button class="button1" type="submit" onclick="null()">ROTTRY!!</button>';
     document.getElementById("text_number").innerHTML = "";
 
     window.requestAnimationFrame((ts) => loop(ts, 0));
 
 
+    // element = document.getElementById("button");
+    // element.onclick = new Function("ball_init();");
+}
+
+function ball_init(){
+    context.clearRect(0, 0, WIDTH, HEIGHT);
+    document.getElementById("text_number").innerHTML = "";
+    ball.init(WIDTH-60, HEIGHT-60, 50);
+    document.getElementById("button").innerHTML = '<button class="button1" type="submit" onclick="animation_main()">CLICK!!</button>';
+    // element = document.getElementById("button");
+    // element.onclick = new Function("animation_main();");
 }
 
 
@@ -187,13 +226,14 @@ const context = canvas.getContext('2d');
 // body要素に追加する。
 document.body.appendChild(canvas);
 
-// 円と四角形を1個ずつ追加。
-var ball = new Circle(WIDTH-60, HEIGHT-60, 50);
-// objects.push(new Rectangle(350, 350, 50, 50));
-var cnt = 0;
-// var lottery_list = __.range(1,100);
 var lottery_list = [];
 var res_list = [];
 for (var i = 0; i <= 100; i++) {
     lottery_list.push(i);
 }
+
+// 円と四角形を1個ずつ追加。
+var ball = new Circle(WIDTH-60, HEIGHT-60, 50);
+// objects.push(new Rectangle(350, 350, 50, 50));
+var cnt = 0;
+// var lottery_list = __.range(1,100);
