@@ -2,14 +2,8 @@
 
 // Electronのモジュール
 const electron = require("electron");
-
-// アプリケーションをコントロールするモジュール
 const app = electron.app;
-
-// ウィンドウを作成するモジュール
 const BrowserWindow = electron.BrowserWindow;
-
-// メインウィンドウはGCされないようにグローバル宣言
 let mainWindow;
 
 // 全てのウィンドウが閉じたら終了
@@ -23,7 +17,7 @@ app.on('window-all-closed', function() {
 app.on('ready', function() {
   // メイン画面の表示。ウィンドウの幅、高さを指定できる
   mainWindow = new BrowserWindow({
-      width: 1500,
+      width: 1300,
       height: 600,
       'transparent': true,
       'frame': false,

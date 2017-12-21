@@ -213,7 +213,7 @@ function ball_init(){
 
 
 
-const WIDTH = 1000;
+const WIDTH = 800;
 const HEIGHT = 500;
 
 const canvas = document.createElement('canvas');
@@ -228,12 +228,8 @@ document.body.appendChild(canvas);
 
 var lottery_list = [];
 var res_list = [];
-for (var i = 0; i <= 100; i++) {
+for (var i = 1; i <= 75; i++) {
     lottery_list.push(i);
 }
 
-// 円と四角形を1個ずつ追加。
 var ball = new Circle(WIDTH-60, HEIGHT-60, 50);
-// objects.push(new Rectangle(350, 350, 50, 50));
-var cnt = 0;
-// var lottery_list = __.range(1,100);
